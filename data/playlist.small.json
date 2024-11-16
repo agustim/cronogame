@@ -1,0 +1,47 @@
+[
+  {
+    "id": 0,
+    "title": "Starman - 2012 Remaster",
+    "artist": "David Bowie",
+    "year": "1972",
+    "url": "https://youtube.com/watch?v=tRcPA7Fzebw",
+    "type": "music",
+    "source": "youtube"
+  },
+  {
+    "id": 1,
+    "title": "Mi Gato",
+    "artist": "Rosario",
+    "year": "2013",
+    "url": "https://youtube.com/watch?v=jbgULaCiV44",
+    "type": "music",
+    "source": "youtube"
+  },
+  {
+    "id": 2,
+    "title": "In Da Club",
+    "artist": "50 Cent",
+    "year": "2003",
+    "url": "https://youtube.com/watch?v=H3axP4norfk",
+    "type": "music",
+    "source": "youtube"
+  },
+  {
+    "id": 3,
+    "title": "Solo Si Es Contigo",
+    "artist": "Bombai, Bebe",
+    "year": "2017",
+    "url": "https://youtube.com/watch?v=NMVBQ6C4iNA",
+    "type": "music",
+    "source": "youtube"
+  },
+  {
+    "id": 4,
+    "title": "Call Me",
+    "artist": "Blondie",
+    "year": "1999",
+    "url": "https://youtube.com/watch?v=o3hHsVtqNFQ",
+    "type": "music",
+    "source": "youtube"
+  }
+]
