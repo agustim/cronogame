@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import playlist from '../data/playlist.json';
+import playlist from '../data/playlist.small.json';
 
 // export interface Card {
 //     id: string;
@@ -17,8 +17,10 @@ import playlist from '../data/playlist.json';
 //     comodins: number;
 // }
 
+
 const getRandomCard = (universeCards, setUniverseCards) => {
 
+    console.log(universeCards);
     // Get universeCards from context
     //const { universeCards, setUniverseCards, setActiveCard } = useContext(GlobalContext);
 
@@ -42,6 +44,17 @@ const getRandomCard = (universeCards, setUniverseCards) => {
     return card;
 }
 
+const initActivePlayer = (players, setActivePlayer) => {
+    setActivePlayer({ player: players[0], idx: 0 });
+}
+
+const addPlayer = (players, setPlayers, player) => {
+    console.log("addPlayer");
+    console.log(player);
+    console.log([...players, player]);
+    setPlayers([...players, player]);
+}
+
 
 export const GlobalContext = React.createContext({
     universeCards: playlist,
@@ -50,16 +63,20 @@ export const GlobalContext = React.createContext({
     setActiveCard: (value) => { },
     players: [],
     setPlayers: (value) => { },
-    activePlayer: 0,
+    addPlayer: (players, value) => addPlayer(players, (value) => {}, value),
+    activePlayer: null,
     setActivePlayer: (value) => { },
-    getRandomCard: () => getRandomCard(playlist, (value) => { })
+    initActivePlayer: (players) => initActivePlayer(players, (value) => { }),
+    nextActivePlayer: () => { if (activePlayer.idx < players.length - 1) { setActivePlayer({player: players[activePlayer.idx + 1], idx: activePlayer.idx + 1}) } else { setActivePlayer({player: players[0], idx: 0}) } },
+    getRandomCard: () => getRandomCard(playlist, (value) => { }),
+    initPlayer: (name) => { return { name, cronology: [], comodins: 2 } }
 })
 
 export const GlobalContextProvider = (props) => {
     const [universeCards, setUniverseCards] = useState(playlist);
     const [activeCard, setActiveCard] = useState(null);
     const [players, setPlayers] = useState([]);
-    const [activePlayer, setActivePlayer] = useState(0);
+    const [activePlayer, setActivePlayer] = useState({});
 
     return (
         <GlobalContext.Provider
@@ -70,9 +87,13 @@ export const GlobalContextProvider = (props) => {
                 setActiveCard,
                 players,
                 setPlayers,
+                addPlayer,
                 activePlayer,
                 setActivePlayer,
+                initActivePlayer,
+                nextActivePlayer,
                 getRandomCard,
+                initPlayer
             }}>
             {props.children}
         </GlobalContext.Provider>

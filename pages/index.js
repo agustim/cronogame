@@ -5,13 +5,29 @@ import { Page, Button, Navbar, Block } from 'konsta/react';
 import { useGlobalContext } from "../hooks/useGlobalContext";
 
 export default function Home() {
-
   // Define playing state
-  const { universeCards, getRandomCard, activeCard, setActiveCard, setUniverseCards } = useGlobalContext();
+  const { universeCards, getRandomCard, activeCard, addPlayer, players, initPlayer, initActivePlayer, activePlayer } = useGlobalContext();
   const [playing, setPlaying] = useState(false);
   const [url, setUrl] = useState(null);
   const [widthPlayer, setWidthPlayer] = useState(0);
   const [heightPlayer, setHeightPlayer] = useState(0);
+  const [status, setStatus] = useState("init");
+
+  useEffect(() => {
+    // Define example players when player have name, array of cards, and comodins.    
+    addPlayer(players, initPlayer("Player 1")) 
+    addPlayer(players, initPlayer("Player 2"));
+    addPlayer(players, initPlayer("Player 3"));
+    initActivePlayer(players);
+    setStatus("ready");
+  }, []);
+
+  useEffect(() => {
+    if (status === "ready") {
+      console.log("Players: ", players);
+      console.log("Active Player: ", activePlayer);
+    }
+  }, [status]);
 
   const playOrStop = () => {
     setPlaying(!playing);
@@ -32,7 +48,6 @@ export default function Home() {
 
   const readCard = () => {
     let card = getRandomCard();
-    console.log(card);
     determinePlayerSize(card.type);
     setUrl(card.url);
   }
@@ -48,6 +63,7 @@ export default function Home() {
         width={widthPlayer}
         height={heightPlayer}
         playing={playing} />
+        {activePlayer}
     </Page>
   );
 }
