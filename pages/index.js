@@ -35,8 +35,11 @@ export default function Home() {
     if (status === "select-cronology") {
       if (activePlayer && activePlayer.player.cronology.length == 0) {
         console.log("Add card to player");
+        activeCard.uncovered = true;
         addCardToPlayer(activePlayer.player, activeCard);
         setActivePlayerReload(true);
+        nextActivePlayer();
+        setStatus("get-card");
       }
     }
   }, [status]);
