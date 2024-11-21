@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import playlist from '../data/playlist.small.json';
+import Game from '../lib/game.js';
 
 // export interface Card {
 //     id: string;
@@ -19,6 +20,8 @@ import playlist from '../data/playlist.small.json';
 
 
 export const GlobalContext = React.createContext({
+    game: null,
+    setGame: (value) => { },
     universeCards: playlist,
     setUniverseCards: (value) => { },
     activeCard: null,
@@ -40,6 +43,8 @@ export const GlobalContextProvider = (props) => {
     const [activeCard, setActiveCard] = useState(null);
     const [players, setPlayers] = useState([]);
     const [activePlayer, setActivePlayer] = useState(null);
+
+    const [game, setGame] = useState(new Game(playlist));
 
     const addPlayer = (player) => {
         console.log("addPlayer");
@@ -99,6 +104,8 @@ export const GlobalContextProvider = (props) => {
     return (
         <GlobalContext.Provider
             value={{
+                game,
+                setGame,
                 universeCards,
                 setUniverseCards,
                 activeCard,

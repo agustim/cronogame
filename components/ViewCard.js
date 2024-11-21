@@ -27,7 +27,7 @@ export const ViewCard = ({ card }) => {
 
     return (
         <ListItem>
-                <div className={uncovered ? "border" : ""} onClick={uncoverCard}>
+                <div className={"border"} onClick={uncoverCard}>
                     {uncovered ? (
                         <>
                             <h1>{card.title}</h1>

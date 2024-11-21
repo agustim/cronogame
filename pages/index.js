@@ -40,6 +40,10 @@ export default function Home() {
         setActivePlayerReload(true);
         nextActivePlayer();
         setStatus("get-card");
+      } else if (activePlayer && activePlayer.player.cronology.length > 0) {
+        console.log("View player");
+        addCardToPlayer(activePlayer.player, activeCard);
+        setActivePlayerReload(true);
       }
     }
   }, [status]);
@@ -77,7 +81,7 @@ export default function Home() {
 
 
   return (
-    <Page>
+    <Page id="homePage">
 
     { (status === "init") && <Block>Initializing...</Block> }
     { (status === "select-players") && <Block>Select numbers of players</Block> }

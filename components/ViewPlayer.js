@@ -13,8 +13,14 @@ import { ViewCard } from "./ViewCard";
 
 export const ViewPlayer = ({ player }) => {
 
+    const [uncoveredCards, setUncoveredCards] = useState([]);
+
     useEffect(() => {
         console.log("ViewPlayer: ", player);
+        // Get all uncovered cards from player
+        setUncoveredCards(player.cronology.filter(card => card.uncovered));
+        const coveredCards = player.cronology.filter(card => !card.uncovered);
+        console.log("Uncovered cards: ", uncoveredCards, " Covered cards: ", coveredCards);
     }, []);
 
     return (
@@ -22,11 +28,14 @@ export const ViewPlayer = ({ player }) => {
         <>
             <h1>{player.name}</h1>
             <List>
-                {player.cronology.map((card) => {
-                    return (
+                { uncoveredCards.map((card, index) => (
+                    <React.Fragment key={index}>
+                        <div>
+                        {index > 0 && uncoveredCards[index-1]}
+                        </div>
                         <ViewCard card={card} />
-                    );
-                })}
+                    </React.Fragment>
+                ))}
             </List>
         </>
 
