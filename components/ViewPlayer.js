@@ -7,19 +7,38 @@ import {
     Panel,
     List,
     ListItem,
+    Button
 } from "konsta/react";
 import { ViewCard } from "./ViewCard";
 
 
-export const ViewPlayer = ({ player }) => {
+export const ViewPlayer = ({ player, active, fnPosition }) => {
 
 
     const cardsPlayer = (player) => {
-        return (player.cronology.filter(card => card.uncovered).map((card, index) => (
 
-            <div key={index}>
-                <ViewCard card={card} />
-            </div>
+        const uncoveredCards = player.cronology.filter(card => card.uncovered);
+
+        return (uncoveredCards.map((card, index) => (
+            <>
+                {(active) && (
+                <List>
+                    <Button onClick={()=>fnPosition(index)}>
+                        {(index > 0) && uncoveredCards[index - 1].year} - {card.year}
+                    </Button>
+                </List>
+                )}
+                <List>
+                    <ViewCard card={card} key={index} />
+                </List>
+                { ( (active)  && (index === uncoveredCards.length - 1)) && (
+                    <List>
+                        <Button onClick={()=>fnPosition(index+1)}>
+                            {card.year} - 
+                        </Button>
+                    </List>
+                )}
+            </>
         )))
     }
 
@@ -27,12 +46,14 @@ export const ViewPlayer = ({ player }) => {
 
     return (
 
-        <>
-            <h1>{player.name}</h1>
+        <div className={(active) ? "bg-green-100" : ""}>
             <List>
-                { cardsPlayer(player) }
+                {player.name}
             </List>
-        </>
+
+            {cardsPlayer(player)}
+
+        </div >
 
     )
 }

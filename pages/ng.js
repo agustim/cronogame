@@ -86,7 +86,11 @@ export default function Home() {
                 { 
                     JSON.parse(players).map((player, index) => (
                         (player?.name == activeTab) && 
-                            <ViewPlayer key={index} player={player} />
+                            <ViewPlayer 
+                                key={index} 
+                                player={player} 
+                                active={(game.activePlayer == index)} 
+                                fnPosition={setPosition} />
                     ))
                 }
             </Block>
