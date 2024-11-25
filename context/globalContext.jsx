@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import playlist from '../data/playlist.small.json';
+import playlist from '../data/playlist.json';
 import Game from '../lib/game.js';
 
 // export interface Card {
