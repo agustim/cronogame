@@ -4,15 +4,10 @@ const ReactPlayer = dynamic(() => import("react-player"), { ssr: false });
 import { Page, Button, Navbar, Block, ListInput, List, Tabbar, TabbarLink } from 'konsta/react';
 import { useGlobalContext } from "../hooks/useGlobalContext";
 import { ViewPlayer } from '../components/ViewPlayer';
-import useDeepCompareEffect from 'use-deep-compare-effect'
-import Game from '../lib/game.js';
-import playlist from '../data/playlist.json';
 
 export default function Home() {
 
     const { game } = useGlobalContext();
-    //let game = new Game(playlist);
-    const [position, setPosition] = useState(0);
     const [players, setPlayers] = useState("[]");
     const [activeTab, setActiveTab] = useState();
     const [player, setPlayer] = useState();
@@ -31,13 +26,10 @@ export default function Home() {
     }
 
     const selectCard = () => {
-        game.selectCardInPlayer(position, []);
-        updatePlayers();
-    }
-
-
-    const onChangePosition = (e) => {
-        setPosition(e.target.value);
+        if (game.selectCardInBids()) {
+        //game.selectCardInPlayer(position, []);
+            updatePlayers();
+        }
     }
 
     
@@ -62,9 +54,9 @@ export default function Home() {
                 <Button onClick={getCard} text="Get Card">Get Card</Button>
             </Block>
             <Block>
-                <List strongIos insetIos>
-                    <ListInput onChange={onChangePosition} type="text" placeholder="Position" value={position} />
-                </List>
+                <Button onClick={()=>{console.log(game.viewActiveCard())}}>Active Card</Button>
+            </Block>
+            <Block>
                 <Button onClick={selectCard} text="Select Cronology">Cronolgoy</Button>
             </Block>
             <Block>
@@ -89,8 +81,7 @@ export default function Home() {
                             <ViewPlayer 
                                 key={index} 
                                 player={player} 
-                                active={(game.activePlayer == index)} 
-                                fnPosition={setPosition} />
+                                active={(game.activePlayer == index)} />
                     ))
                 }
             </Block>
