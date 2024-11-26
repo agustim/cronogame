@@ -14,8 +14,8 @@ import { ViewCard } from "./ViewCard";
 
 export const ViewPlayer = ({ player, active }) => {
 
-    const activeColor = "bg-green-600";
-    const inactiveColor = "bg-gray-200";
+    const activeColor = "bg-green-500";
+    const inactiveColor = "bg-gray-300";
 
     const { game } = useGlobalContext();
     const numberPositions = player.cronology.filter(card => card.uncovered).length;
@@ -26,6 +26,7 @@ export const ViewPlayer = ({ player, active }) => {
     const updateBid = (position) => {
         game.bidActivePlayer(position);
         setBids(JSON.stringify(game.bids));
+        console.log("ViewPlayer: bids", game.bids, bids);
     }
 
     const generatePositionsColors = () => {
@@ -45,7 +46,7 @@ export const ViewPlayer = ({ player, active }) => {
 
     useEffect(() => {
         generatePositionsColors();
-        console.log("bids", game.bids);
+        console.log("bids", game.bids, positionsColors);
     }, [bids]);
 
 
