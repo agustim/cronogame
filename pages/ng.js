@@ -11,6 +11,13 @@ export default function Home() {
     const [players, setPlayers] = useState("[]");
     const [activeTab, setActiveTab] = useState();
     const [player, setPlayer] = useState();
+    const [activePlayer, setActivePlayer] = useState(0);
+    const [activeBidPlayerName, setActiveBidPlayerName] = useState("");
+
+    const updateBidPlayer = () => {
+        console.log("game.activeBidPlayer:", game.activeBidPlayer,game.players[game.activeBidPlayer].name)
+        setActiveBidPlayerName(game.players[game.activeBidPlayer].name);
+    }
 
     const updatePlayers = () => {
         setPlayers(JSON.stringify(game.players));
@@ -18,7 +25,10 @@ export default function Home() {
         setActiveTab(game.players[game.activePlayer].name);
         //set player when name is activeTab
         setPlayer(game.players.find(player => player.name === game.players[game.activePlayer].name));
+        setActivePlayer(game.activePlayer);
+        updateBidPlayer()
     }
+
 
     const getCard = () => {
         game.getCard();
@@ -60,6 +70,15 @@ export default function Home() {
                 <Button onClick={selectCard} text="Select Cronology">Cronolgoy</Button>
             </Block>
             <Block>
+                {activePlayer} 
+                {
+                    (activeBidPlayerName != "") &&
+                        <>
+                        - {activeBidPlayerName}
+                        </>
+                }
+            </Block>
+            <Block>
                 <Tabbar
                     labels
                     className="left-0 bottom-0 fixed">
@@ -81,7 +100,9 @@ export default function Home() {
                             <ViewPlayer 
                                 key={index} 
                                 player={player} 
-                                active={(game.activePlayer == index)} />
+                                active={(game.activePlayer == index)} 
+                                updateBidPlayer={updateBidPlayer}
+                            />
                     ))
                 }
             </Block>

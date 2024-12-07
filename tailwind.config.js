@@ -17,4 +17,10 @@ module.exports = konstaConfig({
     },
   },
   plugins: [],
+  konsta: {
+    colors: {
+      'button-green': '#059669',
+      'button-gray': '#475569'
+    }
+  },
 });

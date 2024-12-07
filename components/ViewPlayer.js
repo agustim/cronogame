@@ -14,39 +14,70 @@ import { ViewCard } from "./ViewCard";
 
 export const ViewPlayer = ({ player, active }) => {
 
-    const activeColor = "bg-green-500";
-    const inactiveColor = "bg-gray-300";
+    const activePosition = true;
+    const inactivePosition = false;
 
     const { game } = useGlobalContext();
     const numberPositions = player.cronology.filter(card => card.uncovered).length;
     const [bids, setBids] = useState("[]");
-    const initialPositionsColors = Array.from({ length: numberPositions + 1 }, () => activeColor)
-    const [positionsColors, setPositionsColors] = useState(JSON.stringify(initialPositionsColors));
+    const initialPositionsActives = Array.from({ length: numberPositions + 1 }, () => activePosition)
+    const [positionsActives, setPositionsActives] = useState(JSON.stringify(initialPositionsActives));
+    const [activeBidPlayer, setActiveBidPlayer] = useState("");
 
     const updateBid = (position) => {
         game.bidActivePlayer(position);
         setBids(JSON.stringify(game.bids));
+        console.log("ViewPlayer: bids:", game.bids, bids);
+        console.log("ActiveBidPlayer:", game.activeBidPlayer);
+        if (game.activeBidPlayer !== null) {
+            setActiveBidPlayer(game.players[game.activeBidPlayer].name);
+        } else {
+            setActiveBidPlayer("");
+        }
         console.log("ViewPlayer: bids", game.bids, bids);
     }
 
-    const generatePositionsColors = () => {
-        const localBids = JSON.parse(bids);
-        // in localBids, existe player and postion, convert all positions to gray
-        let localPositionsColors = JSON.parse(positionsColors);
-        localBids.forEach(bid => {
-            localPositionsColors[bid.position] = inactiveColor;
-        })
-        setPositionsColors(JSON.stringify(localPositionsColors));
+    const updateNoBid = () => {
+        game.nextBidPlayer();
+        setBids(JSON.stringify(game.bids));
+        if (game.activeBidPlayer !== null) {
+            setActiveBidPlayer(game.players[game.activeBidPlayer].name);
+        } else {
+            setActiveBidPlayer("");
+        }
+        console.log("ViewPlayer: bids", game.bids, bids);
     }
 
-    const bgColor = (position) => {
-        const localPositionsColors = JSON.parse(positionsColors);
-        return localPositionsColors[position];
+    const isBidOtherPlayer = () => {
+        const localBids = JSON.parse(bids);
+        return (localBids.length >= 1 && activeBidPlayer !== "");
+    }
+
+    const generatePositionsActives = () => {
+        const localBids = JSON.parse(bids);
+        // in localBids, existe player and postion, convert all positions to gray
+        let localPositionsActives = JSON.parse(positionsActives);
+        localBids.forEach(bid => {
+            localPositionsActives[bid.position] = inactivePosition;
+        })
+        setPositionsActives(JSON.stringify(localPositionsActives));
+    }
+
+    const isActive = (position) => {
+        const localPositionsActives = JSON.parse(positionsActives);
+        return localPositionsActives[position];
+    }
+
+    const playerBirInPosition = (position) => {
+        const plyIndex = game.bids.filter(bid => bid.position === position)[0].playerIndex;
+        const player = game.players[plyIndex];
+        console.log("playerBirInPosition", player, plyIndex);
+        return player.name;
     }
 
     useEffect(() => {
-        generatePositionsColors();
-        console.log("bids", game.bids, positionsColors);
+        generatePositionsActives();
+        console.log("bids", game.bids, positionsActives);
     }, [bids]);
 
 
@@ -54,9 +85,15 @@ export const ViewPlayer = ({ player, active }) => {
 
         return (
             <List>
-                <Button onClick={() => updateBid(position)} className={bgColor(position)}>
+                { (isActive(position)) && ( 
+                <Button onClick={() => updateBid(position)} className="k-color-button-green">
                     {firstYear} - {lastYear}
                 </Button>
+                ) || (
+                    <Button className="k-color-button-gray">
+                        {firstYear} - {lastYear} {playerBirInPosition(position)}
+                    </Button>
+                )}
             </List>
         )
     }
@@ -82,6 +119,15 @@ export const ViewPlayer = ({ player, active }) => {
                         lastYear=""
                         position={index + 1} />
                 )}
+                { /* Poder no apostar */
+                    (isBidOtherPlayer() && (index === uncoveredCards.length - 1)) && (
+                        <List>
+                            <Button onClick={updateNoBid} className="k-color-button-red">
+                                No apostar - {activeBidPlayer}
+                            </Button>
+                        </List>
+                    )
+                }
             </div>
         )))
     }
@@ -92,7 +138,7 @@ export const ViewPlayer = ({ player, active }) => {
 
         <div className={(active) ? "bg-green-100" : ""}>
             <List>
-                {player.name}
+                {player.name} ({player.comodins} comodins)
             </List>
 
             {cardsPlayer(player)}
