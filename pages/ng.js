@@ -14,8 +14,13 @@ export default function Home() {
     const [activePlayer, setActivePlayer] = useState(0);
     const [activeBidPlayerName, setActiveBidPlayerName] = useState("");
 
+    const [playing, setPlaying] = useState(false);
+    const [url, setUrl] = useState(null);
+    const [widthPlayer, setWidthPlayer] = useState(300);
+    const [heightPlayer, setHeightPlayer] = useState(200);
+
     const updateBidPlayer = () => {
-        console.log("game.activeBidPlayer:", game.activeBidPlayer,game.players[game.activeBidPlayer].name)
+        console.log("game.activeBidPlayer:", game.activeBidPlayer, game.players[game.activeBidPlayer].name)
         setActiveBidPlayerName(game.players[game.activeBidPlayer].name);
     }
 
@@ -32,18 +37,46 @@ export default function Home() {
 
     const getCard = () => {
         game.getCard();
+        preapreCard();
         updatePlayers();
     }
 
     const selectCard = () => {
         if (game.selectCardInBids()) {
-        //game.selectCardInPlayer(position, []);
             updatePlayers();
         }
     }
 
-    
+    const preapreCard = () => {
+        const card = game.viewActiveCard();
+        if (card) {
+            determinePlayerSize(card.type);
+            setUrl(card.url);
+            console.log("Prepared card: ", card);
+        }
+    }
+
+    const determinePlayerSize = (type) => {
+        if (type === "music") {
+            setWidthPlayer(0);
+            setHeightPlayer(0);
+
+        } else if (type === "video") {
+            let width = window.innerWidth;
+            let height = window.innerHeight;
+            setWidthPlayer(width);
+            setHeightPlayer(height);
+        }
+    }
+    const playOrStop = () => {
+        setPlaying(!playing);
+    }
+
     useEffect(() => {
+        game.on('after-get-card', () => {
+            setPlaying(false);
+            preapreCard();
+        });
         console.log("init game");
         console.log(game.players.length);
         game.addPlayer(game.initPlayer("Player 1"));
@@ -51,7 +84,7 @@ export default function Home() {
         game.addPlayer(game.initPlayer("Player 3"));
         setActiveTab(game.players[0].name);
         game.startGame();
-       
+
     }, []);
 
 
@@ -64,45 +97,52 @@ export default function Home() {
                 <Button onClick={getCard} text="Get Card">Get Card</Button>
             </Block>
             <Block>
-                <Button onClick={()=>{console.log(game.viewActiveCard())}}>Active Card</Button>
+                <Button className="my-2" onClick={() => { console.log(game.viewActiveCard()) }}>Active Card</Button>
+                <Button className="my-2" onClick={playOrStop}>{(playing) ? "Stop" : "Play"}</Button>
             </Block>
             <Block>
                 <Button onClick={selectCard} text="Select Cronology">Cronolgoy</Button>
             </Block>
             <Block>
-                {activePlayer} 
+                <ReactPlayer url={url}
+                    width={widthPlayer}
+                    height={heightPlayer}
+                    playing={playing} />
+            </Block>
+            <Block>
+                {activePlayer}
                 {
                     (activeBidPlayerName != "") &&
-                        <>
+                    <>
                         - {activeBidPlayerName}
-                        </>
+                    </>
                 }
             </Block>
             <Block>
                 <Tabbar
                     labels
                     className="left-0 bottom-0 fixed">
-                {
-                    
-                    JSON.parse(players).map((player, index) => (
-                        <TabbarLink 
-                            active={activeTab === player.name}
-                            key={index}
-                            onClick={() => setActiveTab(player.name)}
-                            label={player.name}
+                    {
+
+                        JSON.parse(players).map((player, index) => (
+                            <TabbarLink
+                                active={activeTab === player.name}
+                                key={index}
+                                onClick={() => setActiveTab(player.name)}
+                                label={player.name}
                             />
-                    ))
-                }
+                        ))
+                    }
                 </Tabbar>
-                { 
+                {
                     JSON.parse(players).map((player, index) => (
-                        (player?.name == activeTab) && 
-                            <ViewPlayer 
-                                key={index} 
-                                player={player} 
-                                active={(game.activePlayer == index)} 
-                                updateBidPlayer={updateBidPlayer}
-                            />
+                        (player?.name == activeTab) &&
+                        <ViewPlayer
+                            key={index}
+                            player={player}
+                            active={(game.activePlayer == index)}
+                            updateBidPlayer={updateBidPlayer}
+                        />
                     ))
                 }
             </Block>

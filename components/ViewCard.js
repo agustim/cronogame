@@ -5,7 +5,7 @@ import {
     Navbar,
     Link as KonstaLink,
     Panel,
-    List,
+    Card,
     ListItem,
 } from "konsta/react";
 
@@ -16,25 +16,18 @@ export const ViewCard = ({ card }) => {
     // else show only "Covered" with border and onclick set card.uncovered to true 
     // classname border
 
-    const uncoverCard = () => {
-        setUncovered(true);
-    }
-
 
     return (
-        <ListItem>
-                <div className={"border"} onClick={uncoverCard}>
-                    {card.uncovered ? (
-                        <>
-                            <h1>{card.title}</h1>
-                            <h2>{card.artist}</h2>
-                            <h3>{card.year}</h3>
-                        </>
-                    ) : (
-                        <h1>Covered</h1>
-                    )}
-                </div>
-        </ListItem>
+            <div className={"border"}>
+                {card.uncovered ? (
+
+                    <Card outline header={card.title} footer={card.artist} className="">
+                        {card.year}
+                    </Card>
+                ) : (
+                    <h1>Covered</h1>
+                )}
+            </div>
     )
 
 }

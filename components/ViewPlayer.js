@@ -84,7 +84,7 @@ export const ViewPlayer = ({ player, active }) => {
     const BidButton = ({firstYear, lastYear, position}) => {
 
         return (
-            <List>
+            <>
                 { (isActive(position)) && ( 
                 <Button onClick={() => updateBid(position)} className="k-color-button-green">
                     {firstYear} - {lastYear}
@@ -94,7 +94,7 @@ export const ViewPlayer = ({ player, active }) => {
                         {firstYear} - {lastYear} {playerBirInPosition(position)}
                     </Button>
                 )}
-            </List>
+            </>
         )
     }
 
@@ -103,16 +103,14 @@ export const ViewPlayer = ({ player, active }) => {
         const uncoveredCards = player.cronology.filter(card => card.uncovered);
 
         return (uncoveredCards.map((card, index) => (
-            <div key={index}>
+            <div key={index} id={"index_" + index}>
                 {(active) && (
                     <BidButton
                         firstYear={(index > 0) && uncoveredCards[index - 1].year}
                         lastYear={card.year}
                         position={index} />
                 )}
-                <List>
-                    <ViewCard card={card} key={index} />
-                </List>
+                <ViewCard card={card} key={index} />
                 {((active) && (index === uncoveredCards.length - 1)) && (
                     <BidButton
                         firstYear={card.year}
@@ -121,11 +119,9 @@ export const ViewPlayer = ({ player, active }) => {
                 )}
                 { /* Poder no apostar */
                     (isBidOtherPlayer() && (index === uncoveredCards.length - 1)) && (
-                        <List>
                             <Button onClick={updateNoBid} className="k-color-button-red">
                                 No apostar - {activeBidPlayer}
                             </Button>
-                        </List>
                     )
                 }
             </div>
