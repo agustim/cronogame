@@ -8,6 +8,9 @@ import { ViewPlayer } from '../components/ViewPlayer';
 export default function Home() {
 
     const { game } = useGlobalContext();
+
+    console.log("game serialize", game.serialize());
+
     const [players, setPlayers] = useState("[]");
     const [activeTab, setActiveTab] = useState();
     const [player, setPlayer] = useState();
@@ -79,9 +82,8 @@ export default function Home() {
         });
         console.log("init game");
         console.log(game.players.length);
-        game.addPlayer(game.initPlayer("Player 1"));
-        game.addPlayer(game.initPlayer("Player 2"));
-        game.addPlayer(game.initPlayer("Player 3"));
+        console.log(game.players);
+        //setPlayers(JSON.stringify(game.players));
         setActiveTab(game.players[0].name);
         game.startGame();
 
@@ -118,6 +120,8 @@ export default function Home() {
                     </>
                 }
             </Block>
+            <Block className={"my-2"}/>
+
             <Block>
                 <Tabbar
                     labels

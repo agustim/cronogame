@@ -1,111 +1,65 @@
-import React, { useEffect, useState } from 'react';
-import dynamic from 'next/dynamic'
-const ReactPlayer = dynamic(() => import("react-player"), { ssr: false });
-import { Page, Button, Navbar, Block } from 'konsta/react';
+import React,{ useState } from 'react';
+import { useRouter } from 'next/router'
+import { Page, Button, List, Block, ListInput, Link } from 'konsta/react';
 import { useGlobalContext } from "../hooks/useGlobalContext";
+//import { Link } from 'next/link';
 import { ViewPlayer } from '../components/ViewPlayer';
 
 export default function Home() {
-  // Define playing state
-  const { universeCards, getRandomCard, activeCard, players, setPlayers, activePlayer, setActivePlayer, addPlayer
-    , initActivePlayer, initPlayer, nextActivePlayer, addCardToPlayer } = useGlobalContext();
-  const [playing, setPlaying] = useState(false);
-  const [url, setUrl] = useState(null);
-  const [widthPlayer, setWidthPlayer] = useState(300);
-  const [heightPlayer, setHeightPlayer] = useState(200);
-  const [status, setStatus] = useState("init");
-  const [activePlayerReload, setActivePlayerReload] = useState(null);
 
-  useEffect(() => {
-    // Define example players when player have name, array of cards, and comodins.    
-    addPlayer(initPlayer("Player 1")); 
-    addPlayer(initPlayer("Player 2"));
-    addPlayer(initPlayer("Player 3"));
-    initActivePlayer();
-    setStatus("select-players");
-  }, []);
+  const route =  useRouter();
+  const { game } = useGlobalContext();
+  const [players, setPlayers] = useState("[]");
+  const [nameAddPlayer, setNameAddPlayer] = useState("");
 
-  useEffect(() => {
-    if (status === "select-players") {
-      console.log("Players: ", players);
-      console.log("Active Player: ", activePlayer);
-      setStatus("get-card");
-    }
-    console.log("Status: ", status);
-    if (status === "select-cronology") {
-      if (activePlayer && activePlayer.player.cronology.length == 0) {
-        console.log("Add card to player");
-        activeCard.uncovered = true;
-        addCardToPlayer(activePlayer.player, activeCard);
-        setActivePlayerReload(true);
-        nextActivePlayer();
-        setStatus("get-card");
-      } else if (activePlayer && activePlayer.player.cronology.length > 0) {
-        console.log("View player");
-        addCardToPlayer(activePlayer.player, activeCard);
-        setActivePlayerReload(true);
-      }
-    }
-  }, [status]);
 
-  useEffect(() => {
-    if (activePlayerReload) {
-      setActivePlayerReload(false);
-    }
-  }, [activePlayerReload]);
-
-  const playOrStop = () => {
-    setPlaying(!playing);
+  const onClickAddPlayer = () => {
+    game.addPlayer(game.initPlayer(nameAddPlayer));
+    console.log("game.players", game.players, JSON.stringify(game.players));
+    setPlayers(JSON.stringify(game.players));
+    setNameAddPlayer("");
   }
 
-  const determinePlayerSize = (type) => {
-    if (type === "music") {
-      setWidthPlayer(0);
-      setHeightPlayer(0);
+  const updatePlayerName = (e) => {
+    setNameAddPlayer(e.target.value)
+  }
 
-    } else if (type === "video") {
-      let width = window.innerWidth;
-      let height = window.innerHeight;
-      setWidthPlayer(width);
-      setHeightPlayer(height);
+  const onClickStartGame = () => {
+    if (game.players.length < 2) {
+      alert("Please add at least 2 players");
+      return
     }
+    route.push('/ng');
   }
-
-  const readCard = () => {
-    let card = getRandomCard();
-    console.log(card);
-    determinePlayerSize(card.type);
-    setUrl(card.url);
-    setStatus("card");
-  }
-
 
   return (
     <Page id="homePage">
+      {/* list players */}
+      <Block>
+        <h1>Players List</h1>
+      </Block>
+      <Block>
+        {
+        JSON.parse(players).map((player, index) => {
+          return <ViewPlayer key={index} player={player} />
+        }
+        )}
+      </Block>
 
-    { (status === "init") && <Block>Initializing...</Block> }
-    { (status === "select-players") && <Block>Select numbers of players</Block> }
-    { (status === "error") && <Block>Error</Block> }
-    { (status === "get-card") && 
       <Block>
-        <Button className="my-2" onClick={readCard}>Get Card</Button>
+        <h1>Add Player</h1>
       </Block>
-    }
-    { (status === "card") &&
       <Block>
-        <Button className="my-2" onClick={playOrStop}>{(playing) ? "Stop" : "Play"}</Button>
-        <Button className="my-2" onClick={()=> { setStatus("select-cronology")}}>Cronology card</Button>
-        <ReactPlayer url={url}
-          width={widthPlayer}
-          height={heightPlayer}
-          playing={playing} />
-      </Block>  
-    }
-    { (status === "select-cronology") &&
-      <Block>
-        <ViewPlayer player={activePlayer.player} />
+        {/* Add user, listinput to define name  */}
+        <List>
+          <ListInput label="Name" type="text" placeholder="Your name" value={nameAddPlayer} onChange={updatePlayerName} />
+          <Button onClick={onClickAddPlayer}>Add Player</Button>
+          {/* go to /ng pages */}
+        </List>
       </Block>
-    } 
+      <Block>
+          <Button onClick={onClickStartGame}>Start Game</Button>
+      </Block>
     </Page>
   );
 }
